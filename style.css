@@ -2126,3 +2126,88 @@ textarea {
     border-radius: 0;
   }
 }
+
+/* ==========================================================================
+   ENHANCED MOBILE OPTIMIZATION (Overrides)
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Flatten all multi-column grids */
+  .form-grid,
+  .panel-selectors,
+  .results-grid,
+  .mix-legend,
+  .dashboard-details-grid,
+  .clients-grid,
+  .inventory-grid,
+  .kanban-board-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal Mobile Fixes */
+  .modal-overlay {
+    padding: 0 !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+  }
+
+  .modal-content {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* Table Mobile Scrolling */
+  .table-container {
+    width: 100vw !important;
+    margin-left: -1rem !important; /* Stretch past main-content padding */
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box;
+  }
+  
+  .table-container table {
+    min-width: 800px; /* Ensure horizontal scroll rather than squish */
+  }
+
+  /* Form Element Sizing */
+  input[type="text"], 
+  input[type="number"], 
+  input[type="email"], 
+  input[type="tel"], 
+  input[type="date"], 
+  select, 
+  textarea {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important; /* iOS zoom fix */
+    padding: 12px !important;
+  }
+
+  /* Make sure Kanban cards don't break width */
+  .kanban-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .kanban-column {
+    min-width: 90vw !important;
+  }
+  
+  /* Wizard split panels */
+  .wizard-panel {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
