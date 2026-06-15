@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AutoFlow Shop Suite</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AutoFlow">
+  <link rel="apple-touch-icon" href="icon.png">
+</head>
+<body>
+  <div class="app-container">
+    <!-- === Sidebar Navigation === -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <!-- Custom Auto Body / Wrench SVG -->
+          <svg viewBox="0 0 24 24">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.13,5.91,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 c-0.12,0.21-0.08,0.47,0.12,0.61l2.03,1.58C4.84,11.36,4.82,11.68,4.82,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+          </svg>
+        </div>
+        <span class="logo-text">AutoFlow Suite</span>
+      </div>
+
+      <nav>
+        <ul class="nav-list">
+          <li class="nav-item active" id="nav-kanban">
+            <button onclick="switchView('kanban')">
+              <svg viewBox="0 0 24 24"><path d="M4 5h6v14H4zm10 0h6v9h-6zm0 13h6v1h-6z" stroke-width="2" stroke-linecap="round"/></svg>
+              Vehicle Flow Board
+            </button>
+          </li>
+          <li class="nav-item" id="nav-clients">
+            <button onclick="switchView('clients')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Clients Manager
+            </button>
+          </li>
+          <li class="nav-item" id="nav-estimates">
+            <button onclick="switchView('estimates')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Retail Estimates
+            </button>
+          </li>
+          <li class="nav-item" id="nav-inventory">
+            <button onclick="switchView('inventory')">
+              <svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14v4m0 0L4 7m8 4v10M4 7v10l8 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Inventory Manager
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="shop-status-card">
+          <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>Active Offline Mode</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- === Main Content Area === -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <h1 class="page-title" id="view-title">Vehicle Flow Board</h1>
+        <div class="stats-summary">
+          <div class="quick-stat">
+            <span class="quick-stat-label">Vehicles in Shop</span>
+            <span class="quick-stat-val" id="top-vehicles-count">0</span>
+          </div>
+          <div class="quick-stat">
+            <span class="quick-stat-label">In Paint Booth</span>
+            <span class="quick-stat-val" id="top-paint-count" style="color: var(--accent-indigo);">0</span>
+          </div>
+          <div class="quick-stat">
+            <span class="quick-stat-label">Low Stock items</span>
+            <span class="quick-stat-val" id="top-low-stock-count">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- === Vehicle Flow Board (Kanban) === -->
+      <section id="view-kanban" class="content-view active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <div class="segmented-control">
+            <button class="control-btn active" id="btn-kanban-board" onclick="toggleKanbanSubView('board')">Active Flow Board</button>
+            <button class="control-btn" id="btn-kanban-archive" onclick="toggleKanbanSubView('archive')">Completed Archive</button>
+          </div>
+          <button class="btn btn-primary" onclick="openNewJobModal()">+ Add New Repair Order</button>
+        </div>
+        
+        <!-- Active Kanban Board Sub-View -->
+        <div id="kanban-board-wrapper">
+          <p class="text-secondary" style="margin-bottom: 1rem;">Drag and drop cards or click arrows to move vehicles between repair stages.</p>
+          <div class="kanban-container" id="kanban-board-container">
+            <!-- Columns will be populated dynamically -->
+          </div>
+        </div>
+        
+        <!-- Completed Archive Sub-View -->
+        <div id="kanban-archive-wrapper" style="display: none;">
+          <p class="text-secondary" style="margin-bottom: 1rem;">A history log of all delivered vehicles that have been picked up and completed.</p>
+          <div class="glass-card">
+            <div class="table-container">
+              <table class="custom-table" id="archive-table">
+                <thead>
+                  <tr>
+                    <th>RO ID</th>
+                    <th>Vehicle Details</th>
+                    <th>Customer Name</th>
+                    <th>Account Type</th>
+                    <th>Completed Date</th>
+                    <th>Invoice Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="kanban-archive-tbody">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- === Clients Manager View === -->
+      <section id="view-clients" class="content-view">
+        <div class="clients-layout">
+          <!-- Left Panel: Client List & Search -->
+          <div class="glass-card clients-list-panel">
+            <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 class="card-title">Shop Clients</h2>
+                <button class="btn btn-primary btn-sm" onclick="openNewClientModal()">+ Add Client</button>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="client-search-input" placeholder="Search client name or phone..." oninput="renderClientsList()" style="flex-grow: 1; min-height: 36px; padding: 0.4rem; font-size: 0.85rem;">
+                <select id="client-type-filter" onchange="renderClientsList()" style="width: 120px; min-height: 36px; padding: 0.4rem; font-size: 0.85rem;">
+                  <option value="all">All Clients</option>
+                  <option value="retail">Retail</option>
+                  <option value="wholesale">Wholesale</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-container" style="max-height: 550px; overflow-y: auto;">
+              <table class="custom-table select-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Phone</th>
+                  </tr>
+                </thead>
+                <tbody id="clients-list-tbody">
+                  <!-- Filled dynamically via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Right Panel: Selected Client Profile -->
+          <div class="glass-card client-profile-panel" id="client-profile-container">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 300px; color: var(--text-muted); text-align: center;">
+              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem; opacity: 0.5;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <h3>Select a client from the directory to view details</h3>
+              <p style="font-size: 0.85rem; max-width: 300px; margin-top: 0.5rem;">You can search and filter clients by account type, view invoices history, and manage outstanding balances.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- === Retail Estimates View === -->
+      <section id="view-estimates" class="content-view">
+        <div class="glass-card">
+          <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            <h2 class="card-title">Retail Customer Estimates</h2>
+            <button class="btn btn-primary btn-sm" onclick="openNewRetailEstimateModal()">+ Create Retail Estimate</button>
+          </div>
+          <div class="table-container">
+            <table class="custom-table" id="retail-estimates-table">
+              <thead>
+                <tr>
+                  <th>Job ID</th>
+                  <th>Vehicle Details</th>
+                  <th>Customer Name</th>
+                  <th>Workflow Stage</th>
+                  <th>Estimate Total</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="retail-estimates-tbody">
+                <!-- Filled dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- === Inventory Manager === -->
+      <section id="view-inventory" class="content-view">
+        <div class="glass-card">
+          <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            <h2 class="card-title">Shop Consumables & Allied Supplies Ledger</h2>
+            <div style="display: flex; gap: 1rem;">
+              <button class="btn btn-primary btn-sm" onclick="openNewInventoryModal()">+ Add Supply Item</button>
+              <button class="btn btn-emerald btn-sm" onclick="generateReorderList()">Generate Reorder List</button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="custom-table" id="inventory-table">
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th>Category</th>
+                  <th>In Stock</th>
+                  <th>Min Safety Level</th>
+                  <th>Unit Price</th>
+                  <th>Stock Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody">
+                <!-- Filled dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+     MODALS & DIALOG WINDOWS
+     ========================================================================== -->
+
+  <!-- Modal: Create / Edit Job -->
+  <!-- Modal: Create / Edit Job -->
+  <div class="modal-overlay" id="job-modal">
+    <div class="modal-content wide">
+      <div class="modal-header">
+        <h3 class="modal-title" id="job-modal-title">Check-in New Vehicle</h3>
+        <button class="close-btn" onclick="closeModal('job-modal')">&times;</button>
+      </div>
+      
+      <!-- Stepper Progress Tracker -->
+      <div class="wizard-stepper" id="wizard-stepper">
+        <div class="step-node active" id="step-node-1" onclick="goToStep(1)">
+          <div class="step-number">1</div>
+          <span class="step-label">Customer</span>
+        </div>
+        <div class="step-line" id="step-line-1"></div>
+        <div class="step-node" id="step-node-2" onclick="goToStep(2)">
+          <div class="step-number">2</div>
+          <span class="step-label">Vehicle</span>
+        </div>
+        <div class="step-line" id="step-line-2"></div>
+        <div class="step-node" id="step-node-3" onclick="goToStep(3)">
+          <div class="step-number">3</div>
+          <span class="step-label">Repairs</span>
+        </div>
+        <div class="step-line" id="step-line-3"></div>
+        <div class="step-node" id="step-node-4" onclick="goToStep(4)">
+          <div class="step-number">4</div>
+          <span class="step-label">Pricing</span>
+        </div>
+        <div class="step-line" id="step-line-4"></div>
+        <div class="step-node" id="step-node-5" onclick="goToStep(5)">
+          <div class="step-number">5</div>
+          <span class="step-label">Review</span>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <form id="job-form">
+          <input type="hidden" id="job-form-id">
+          
+          <!-- Step 1: Customer Details -->
+          <div class="wizard-step active" id="wizard-step-1">
+            <h4 class="wizard-step-title">1. Customer Information</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="client-type">Client Account Type</label>
+                <select id="client-type" onchange="toggleClientFields()">
+                  <option value="retail" selected>Retail / Individual</option>
+                  <option value="wholesale">Wholesale Account</option>
+                </select>
+              </div>
+              <div class="form-group wholesale-only-field" style="display: none;">
+                <label for="wholesale-company">Wholesale Company Name *</label>
+                <input type="text" id="wholesale-company" list="wholesale-companies-list" placeholder="e.g. AutoNation Ford">
+                <datalist id="wholesale-companies-list"></datalist>
+              </div>
+              <div class="form-group">
+                <label for="cust-name">Customer / Contact Name *</label>
+                <input type="text" id="cust-name" required placeholder="e.g. John Doe">
+              </div>
+              <div class="form-group">
+                <label for="cust-phone">Phone Number *</label>
+                <input type="tel" id="cust-phone" required placeholder="e.g. 555-0199">
+              </div>
+              <div class="form-group">
+                <label for="cust-email">Email Address</label>
+                <input type="email" id="cust-email" placeholder="e.g. john@example.com">
+              </div>
+              <div class="form-group">
+                <label for="job-priority">Job Priority</label>
+                <select id="job-priority">
+                  <option value="low">Low Priority</option>
+                  <option value="medium" selected>Standard (Medium)</option>
+                  <option value="high">High / Rush Job</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 2: Vehicle details -->
+          <div class="wizard-step" id="wizard-step-2">
+            <h4 class="wizard-step-title">2. Vehicle Information</h4>
+            <div class="form-grid triple">
+              <div class="form-group">
+                <label for="veh-vin">VIN (17-Digit Decodable)</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <input type="text" id="veh-vin" placeholder="Enter 17-digit VIN" style="flex-grow: 1;">
+                  <button type="button" class="btn btn-sm btn-icon" onclick="startVinScanner()" title="Scan VIN Barcode" style="padding: 0.4rem; height: 36px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--bg-tertiary);">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-primary" onclick="decodeVIN()" style="flex-shrink: 0; min-height: auto; height: 36px; padding: 0 0.8rem;">Decode</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="veh-year">Year *</label>
+                <input type="number" id="veh-year" required min="1900" max="2035" placeholder="e.g. 2021">
+              </div>
+              <div class="form-group">
+                <label for="veh-make">Make *</label>
+                <input type="text" id="veh-make" required placeholder="e.g. Ford" oninput="updatePaintCodeHelper()">
+              </div>
+              <div class="form-group">
+                <label for="veh-model">Model *</label>
+                <input type="text" id="veh-model" required placeholder="e.g. F-150">
+              </div>
+              <div class="form-group">
+                <label for="veh-color">Color Code / Paint Name</label>
+                <input type="text" id="veh-color" placeholder="e.g. Ruby Red (RR)">
+              </div>
+              <div class="form-group">
+                <label for="veh-plate">License Plate</label>
+                <input type="text" id="veh-plate" placeholder="e.g. TX-ABC1234">
+              </div>
+            </div>
+            
+            <!-- Dynamic paint helper card -->
+            <div class="paint-helper-card" id="paint-helper-card" style="display: none; margin-top: 1.5rem;">
+              <div class="helper-header">
+                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span style="font-weight: 600; color: #fff;">Paint Color Code Location Guide</span>
+              </div>
+              <p id="paint-helper-text" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;"></p>
+            </div>
+
+            <!-- Vehicle Photos Section -->
+            <div class="vehicle-photos-section" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <label style="font-weight: 700; color: #fff; font-size: 0.95rem;">Vehicle Photos</label>
+                <button type="button" class="btn btn-sm" onclick="document.getElementById('vehicle-photo-input').click()" style="display: inline-flex; align-items: center; gap: 0.35rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-indigo);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  <span>+ Add Photo / Camera</span>
+                </button>
+                <input type="file" id="vehicle-photo-input" accept="image/*" multiple style="display: none;" onchange="handleVehiclePhotoUpload(event)">
+              </div>
+              <div class="photos-preview-grid" id="vehicle-photos-preview" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.75rem; margin-top: 0.5rem;">
+                <!-- Thumbnails injected by JS -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 3: Damaged Panels & Services -->
+          <div class="wizard-step" id="wizard-step-3">
+            <h4 class="wizard-step-title">3. Configure Repairs & Services</h4>
+            
+            <!-- Container for Retail / Pro-Level Estimating -->
+            <div id="wizard-retail-repairs-container">
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Tap panels to select them, then edit refinish, body, and R&I hours in the list below.</p>
+              
+              <div class="panels-grid-selector" id="wizard-panels-grid">
+                <!-- Grid items generated dynamically by JS -->
+              </div>
+              
+              <div class="selected-panels-editor" id="wizard-selected-panels-editor">
+                <div class="no-panels-message" id="no-panels-selected-msg">
+                  No panels selected yet. Tap panels in the grid above to add repairs.
+                </div>
+                <!-- Active editor inputs are dynamically generated here -->
+              </div>
+            </div>
+            
+            <!-- Container for Wholesale / Flat-Rate Estimating -->
+            <div id="wizard-wholesale-repairs-container" style="display: none;">
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Add flat-rate repair items for this wholesale account. Dealerships prefer simplified flat billing.</p>
+              
+              <!-- Quick Add pills -->
+              <div style="margin-bottom: 1.25rem;">
+                <label style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Quick Add Common Repairs</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;" id="wholesale-quick-add-pills">
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Front Bumper Repair', 250)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Front Bumper Repair ($250)</button>
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Rear Bumper Repair', 250)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Rear Bumper Repair ($250)</button>
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Buff & Touch-Up', 150)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Buff & Touch-Up ($150)</button>
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Headlight Restoration', 80)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Headlight Restoration ($80)</button>
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Wheel Repair', 120)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Wheel Repair ($120)</button>
+                  <button type="button" class="btn btn-sm" onclick="addWholesaleQuickItem('Paint Touch-Up', 100)" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer; border-radius: 6px;">Paint Touch-Up ($100)</button>
+                </div>
+              </div>
+              
+              <div class="selected-panels-editor" style="margin-top:0;">
+                <div style="display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem;">
+                  <div class="form-group" style="flex-grow: 2; min-width: 200px;">
+                    <label for="flat-item-desc">Repair Description / Service Name</label>
+                    <input type="text" id="flat-item-desc" placeholder="e.g. Scuffed bumper repair, blend clearcoat" style="min-height: 38px; padding: 0.5rem;">
+                  </div>
+                  <div class="form-group" style="width: 120px;">
+                    <label for="flat-item-cost">Flat Price ($)</label>
+                    <input type="number" id="flat-item-cost" placeholder="250.00" min="0" step="1" style="min-height: 38px; padding: 0.5rem;">
+                  </div>
+                  <button type="button" class="btn btn-primary" onclick="addManualFlatItem()" style="height: 38px; min-height: auto; padding: 0 1.25rem; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; border-radius: 8px;">+ Add Item</button>
+                </div>
+                
+                <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                  <table class="custom-table" style="font-size: 0.85rem;">
+                    <thead>
+                      <tr>
+                        <th>Repair Description</th>
+                        <th style="width: 150px; text-align: right; padding-right:1.5rem;">Flat Cost</th>
+                        <th style="width: 80px; text-align: center;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="wholesale-flat-items-tbody">
+                      <!-- Flat items rows will be dynamically populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 4: Pricing Rates & Insurance -->
+          <div class="wizard-step" id="wizard-step-4">
+            <h4 class="wizard-step-title">4. Rates & Billing Details</h4>
+            
+            <div style="font-weight: 600; font-family: var(--font-display); font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--accent-indigo);">Shop Labor & Material Rates ($/hr)</div>
+            <div class="form-grid triple" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px;">
+              <div class="form-group">
+                <label for="rate-body">Body Labor Rate ($/hr)</label>
+                <input type="number" id="rate-body" min="0" value="65.00" step="0.5" oninput="recalcWizardCosts()">
+              </div>
+              <div class="form-group">
+                <label for="rate-paint">Paint Labor Rate ($/hr)</label>
+                <input type="number" id="rate-paint" min="0" value="65.00" step="0.5" oninput="recalcWizardCosts()">
+              </div>
+              <div class="form-group">
+                <label for="rate-material">Paint Materials Rate ($/hr)</label>
+                <input type="number" id="rate-material" min="0" value="45.00" step="0.5" oninput="recalcWizardCosts()">
+              </div>
+            </div>
+            
+            <div style="font-weight: 600; font-family: var(--font-display); font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--accent-indigo);">Payer & Delivery</div>
+            <div class="form-grid triple">
+              <div class="form-group">
+                <label for="billing-type">Payer Type</label>
+                <select id="billing-type" onchange="toggleInsuranceFields()">
+                  <option value="customer">Customer Pay (Out-of-Pocket)</option>
+                  <option value="insurance" selected>Insurance Direct</option>
+                </select>
+              </div>
+              <div class="form-group insurance-field">
+                <label for="ins-company">Insurance Company</label>
+                <input type="text" id="ins-company" placeholder="e.g. State Farm">
+              </div>
+              <div class="form-group insurance-field">
+                <label for="ins-deductible">Deductible ($)</label>
+                <input type="number" id="ins-deductible" min="0" placeholder="e.g. 500" value="500" oninput="recalcWizardCosts()">
+              </div>
+              <div class="form-group">
+                <label for="job-stage">Repair Workflow Stage</label>
+                <select id="job-stage">
+                  <option value="intake">1. Intake / Estimation</option>
+                  <option value="teardown">2. Tear Down</option>
+                  <option value="bodywork">3. Body & Metal Work</option>
+                  <option value="paint">4. Paint Prep & Spray</option>
+                  <option value="assembly">5. Reassembly</option>
+                  <option value="detail">6. Detail & QC</option>
+                  <option value="pickup">7. Ready for Pickup</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="job-target-date">Target Delivery Date</label>
+                <input type="date" id="job-target-date">
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 5: Review & Save -->
+          <div class="wizard-step" id="wizard-step-5">
+            <h4 class="wizard-step-title">5. Final Estimate Review</h4>
+            
+            <div class="review-details-container">
+              <!-- Itemized breakdown injected by JS -->
+              <div id="wizard-review-breakdown"></div>
+              
+              <div class="form-group" style="margin-top: 1.5rem;">
+                <label for="job-notes">Job Notes / Damage Details</label>
+                <textarea id="job-notes" placeholder="e.g. Rear-end collision, bumper crushed, trunk lid bent. Needs paint blend on rear quarters." style="min-height: 100px;"></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="wizard-prev-btn" onclick="prevWizardStep()">Back</button>
+        <button class="btn btn-primary" id="wizard-next-btn" onclick="nextWizardStep()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View Job details / Print Invoice -->
+  <div class="modal-overlay" id="job-details-modal">
+    <div class="modal-content wide">
+      <div class="modal-header">
+        <h3 class="modal-title">Repair Order Details</h3>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="btn btn-sm btn-emerald" onclick="window.print()">Print RO / Invoice</button>
+          <button class="close-btn" onclick="closeModal('job-details-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="detail-modal-body">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('job-details-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit Inventory Supply -->
+  <div class="modal-overlay" id="inventory-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="inventory-modal-title">Add Supply Item</h3>
+        <button class="close-btn" onclick="closeModal('inventory-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="inventory-form">
+          <input type="hidden" id="inv-form-id">
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="inv-name">Item Description *</label>
+            <input type="text" id="inv-name" required placeholder="e.g. 3M Masking Tape 2-Inch">
+          </div>
+          <div class="form-grid" style="margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label for="inv-category">Category</label>
+              <select id="inv-category">
+                <option value="Paint Liquids">Paint & Coatings</option>
+                <option value="Abrasives">Abrasives & Sandpaper</option>
+                <option value="Fillers">Body Filler / Putty</option>
+                <option value="Allied Materials">Allied materials (Tape, Paper, Cups)</option>
+                <option value="Fasteners">Fasteners & Clips</option>
+                <option value="Safety">PPE & Safety Equipment</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inv-price">Unit Price ($) *</label>
+              <input type="number" id="inv-price" required min="0" step="0.01" placeholder="e.g. 5.95">
+            </div>
+            <div class="form-group">
+              <label for="inv-stock">Current Qty in Stock *</label>
+              <input type="number" id="inv-stock" required min="0" placeholder="e.g. 15">
+            </div>
+            <div class="form-group">
+              <label for="inv-min">Min Safety Stock Alert *</label>
+              <input type="number" id="inv-min" required min="0" placeholder="e.g. 5">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('inventory-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInventoryItem()">Save Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reorder List Print Preview Modal -->
+  <div class="modal-overlay" id="reorder-list-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Shopping / Supply Reorder List</h3>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm btn-primary" onclick="window.print()">Print List</button>
+          <button class="close-btn" onclick="closeModal('reorder-list-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="reorder-modal-body">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('reorder-list-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Wholesale Monthly Statement Print Preview Modal -->
+  <div class="modal-overlay" id="wholesale-statement-modal">
+    <div class="modal-content wide">
+      <div class="modal-header">
+        <h3 class="modal-title">Wholesale Account Billing Statement</h3>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm btn-primary" onclick="window.print()">Print Statement</button>
+          <button class="close-btn" onclick="closeModal('wholesale-statement-modal')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="wholesale-statement-modal-body">
+        <!-- Filled dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('wholesale-statement-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit Client -->
+  <div class="modal-overlay" id="client-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="client-modal-title">Add Client Profile</h3>
+        <button class="close-btn" onclick="closeModal('client-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="client-form" onsubmit="saveClient(event)">
+          <input type="hidden" id="client-form-id">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="client-type-input">Client Account Type *</label>
+            <select id="client-type-input" onchange="toggleModalClientType()" style="min-height: 36px; padding: 0.4rem;">
+              <option value="retail">Retail / Individual</option>
+              <option value="wholesale">Wholesale Account</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="client-name-input" id="client-name-label">Client Name *</label>
+            <input type="text" id="client-name-input" required placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group" id="client-contact-group" style="margin-bottom: 1rem; display: none;">
+            <label for="client-contact-input">Contact Person</label>
+            <input type="text" id="client-contact-input" placeholder="e.g. Gary Miller">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="client-phone-input">Phone Number</label>
+            <input type="tel" id="client-phone-input" placeholder="e.g. 555-0199">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="client-email-input">Email Address</label>
+            <input type="email" id="client-email-input" placeholder="e.g. billing@example.com">
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+            <button type="button" class="btn" onclick="closeModal('client-modal')">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Client</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Camera VIN Scanner -->
+  <div class="modal-overlay" id="scanner-modal">
+    <div class="modal-content" style="max-width: 480px; background: #111; border: 1px solid #333; overflow: hidden; padding: 0;">
+      <div class="modal-header" style="border-bottom: 1px solid #222; padding: 1rem; background: #000; display: flex; justify-content: space-between; align-items: center;">
+        <h3 class="modal-title" style="color: #fff; display: flex; align-items: center; gap: 0.5rem; margin: 0; font-size: 1.2rem;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2" style="color: var(--accent-indigo);"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          VIN Barcode Scanner
+        </h3>
+        <button type="button" class="close-btn" onclick="stopVinScanner()" style="color: #999; font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 0; position: relative; background: #000; height: 320px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <video id="scanner-video" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+        <div class="scanner-frame-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+          <div class="scanner-reticle" style="width: 80%; height: 60px; border: 2px solid #10B981; border-radius: 4px; position: relative; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
+          <div class="scanner-laser" style="position: absolute; width: 80%; height: 2px; background: #EF4444; box-shadow: 0 0 8px #EF4444; animation: laserSweep 2s infinite ease-in-out;"></div>
+        </div>
+        <div id="scanner-status" style="position: absolute; bottom: 1rem; background: rgba(0,0,0,0.7); color: #fff; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; font-family: var(--font-display);">
+          Align VIN Barcode inside frame
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid #222; padding: 1rem; background: #000; display: flex; justify-content: space-between; gap: 1rem; align-items: center;">
+        <button type="button" class="btn btn-sm" onclick="simulateVinScan()" style="background: rgba(99, 102, 241, 0.15); border: 1px solid var(--accent-indigo); color: var(--accent-indigo);">Simulate Scan (Demo)</button>
+        <button type="button" class="btn btn-sm" onclick="stopVinScanner()">Close Camera</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Parts Lookup helper -->
+  <div class="modal-overlay" id="parts-lookup-modal">
+    <div class="modal-content" style="max-width: 550px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="parts-lookup-title">OEM & LKQ Parts Lookup</h3>
+        <button class="close-btn" onclick="closeModal('parts-lookup-modal')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;" id="parts-lookup-context">
+          Vehicle: <strong style="color: #fff;" id="parts-lookup-vehicle-desc">Generic</strong> | Panel: <strong style="color: #fff;" id="parts-lookup-panel-desc">Hood</strong>
+        </div>
+        
+        <div style="font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">Parts Catalog Recommendations</div>
+        <div id="parts-lookup-results" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 250px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.25rem;">
+          <!-- Catalog buttons injected by JS -->
+        </div>
+        
+        <div style="font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem;">Look Up Online / Salvage Databases</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;" id="parts-lookup-external-links">
+          <!-- External search links injected by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('parts-lookup-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Overlay for viewing images -->
+  <div class="modal-overlay" id="lightbox-overlay" onclick="closeModal('lightbox-overlay')" style="background: rgba(0,0,0,0.95); padding: 0;">
+    <div style="position: absolute; top: 1rem; right: 1rem; color: #fff; font-size: 2rem; cursor: pointer; font-weight: bold; z-index: 1200;">&times;</div>
+    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 2rem;">
+      <img id="lightbox-image" src="" alt="Full-screen vehicle photo" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    </div>
+  </div>
+
+  <!-- === Notification Toast Placement === -->
+  <div class="toast-container" id="toast-placement"></div>
+
+  <!-- === Main Javascript === -->
+  <script src="app.js"></script>
+  
+  <!-- === PWA Service Worker Registration === -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(reg => console.log("Service Worker registered successfully:", reg))
+          .catch(err => console.log("Service Worker registration failed:", err));
+      });
+    }
+  </script>
+</body>
+</html>
