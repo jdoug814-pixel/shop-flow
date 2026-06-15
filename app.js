@@ -2,6 +2,11 @@
 // BODY SHOP MANAGEMENT SUITE (BSMS) - APPLICATION LOGIC
 // ==========================================================================
 
+// --- Supabase Initialization ---
+const SUPABASE_URL = "https://izioubbncozezsbwahzg.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6aW91YmJuY296ZXpzYndhaHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0ODU3NTcsImV4cCI6MjA5NzA2MTc1N30.j3U4W6h5nZ-_MQadr7pt4CNWBnITzsuAlux-9W-z4Hw";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // --- Shop Config & Constant Values ---
 const SHOP_LABOR_RATE = 65.00; // Dollars per hour (default fallback)
 const STANDARD_MATERIAL_RATE = 45.00; // Paint materials rate per labor hour (default fallback)
@@ -376,104 +381,27 @@ const DEFAULT_JOBS = [
   }
 ];
 
-// Load state from localStorage or use defaults
-function loadData() {
-  const savedJobs = localStorage.getItem("bsms_jobs");
-  const savedInventory = localStorage.getItem("bsms_inventory");
-  const savedClients = localStorage.getItem("bsms_clients");
-  
-  if (savedJobs) {
-    state.jobs = JSON.parse(savedJobs);
-    
-    // Schema migration for old jobs to ensure backward compatibility
-    state.jobs.forEach(job => {
-      if (!job.targetDate) {
-        if (job.id === "RO-1001") job.targetDate = "2026-06-20";
-        if (job.id === "RO-1002") job.targetDate = "2026-06-25";
-        if (job.id === "RO-1003") job.targetDate = "2026-06-18";
-      }
-      
-      if (!job.rates) {
-        job.rates = { bodyRate: 65.0, paintRate: 65.0, materialRate: 45.0 };
-      }
+// Load state from Supabase
+async function loadData() {
+  try {
+    const [jobsRes, inventoryRes, clientsRes] = await Promise.all([
+      supabase.from('jobs').select('*'),
+      supabase.from('inventory').select('*'),
+      supabase.from('clients').select('*')
+    ]);
 
-      if (!job.clientType) {
-        job.clientType = job.wholesaleCompany ? "wholesale" : "retail";
-      }
+    if (jobsRes.error) console.error("Error fetching jobs:", jobsRes.error);
+    if (inventoryRes.error) console.error("Error fetching inventory:", inventoryRes.error);
+    if (clientsRes.error) console.error("Error fetching clients:", clientsRes.error);
 
-      if (!job.photos) {
-        job.photos = [];
-      }
+    state.jobs = jobsRes.data || [];
+    state.inventory = inventoryRes.data || [];
+    state.clients = clientsRes.data || [];
 
-      if (!job.flatItems) {
-        job.flatItems = [];
-      }
-      
-      if (job.clientType === "retail" && !job.panels) {
-        if (job.laborHours > 0 || job.partsCost > 0 || job.paintMaterialSurcharge > 0) {
-          const refHrs = job.paintMaterialSurcharge / job.rates.materialRate;
-          const refLab = Math.min(refHrs || 0, job.laborHours);
-          const bodyLab = Math.max(0, job.laborHours - refLab);
-          
-          job.panels = [{
-            key: "misc",
-            label: "Other / Misc Repair",
-            refinishHours: refLab,
-            bodyHours: bodyLab,
-            riHours: 0,
-            substrate: "steel",
-            replacePart: job.partsCost > 0,
-            partName: "Parts Surcharge",
-            partCost: job.partsCost,
-            riSelected: false
-          }];
-        } else {
-          job.panels = [];
-        }
-      }
-      
-      // Migrate legacy workflow stages to new 5-column layout
-      const validStages = ["intake", "bodywork", "paint", "detail", "pickup", "completed"];
-      if (!validStages.includes(job.stage)) {
-        if (job.stage === "teardown" || job.stage === "bodywork") {
-          job.stage = "bodywork";
-        } else if (job.stage === "paint" || job.stage === "assembly") {
-          job.stage = "paint";
-        } else if (job.stage === "detail") {
-          job.stage = "detail";
-        } else if (job.stage === "pickup") {
-          job.stage = "pickup";
-        } else {
-          job.stage = "intake";
-        }
-      }
-      
-      // Clean up legacy variables
-      delete job.pdrLines;
-      delete job.pdrTotal;
-    });
-  } else {
-    state.jobs = [...DEFAULT_JOBS];
-    localStorage.setItem("bsms_jobs", JSON.stringify(state.jobs));
-  }
-  
-  if (savedInventory) {
-    state.inventory = JSON.parse(savedInventory);
-  } else {
-    state.inventory = [...DEFAULT_INVENTORY];
-    localStorage.setItem("bsms_inventory", JSON.stringify(state.inventory));
-  }
-
-  if (savedClients) {
-    state.clients = JSON.parse(savedClients);
-    // Ensure all clients have a type (retail or wholesale)
-    state.clients.forEach(c => {
-      if (!c.type) {
-        c.type = (c.contactName || c.name.toLowerCase().includes("service") || c.name.toLowerCase().includes("car") || c.name.toLowerCase().includes("ford") || c.name.toLowerCase().includes("enterprise")) ? "wholesale" : "retail";
-      }
-    });
-  } else {
-    state.clients = [
+    // Fallbacks if tables are empty
+    if (state.jobs.length === 0) state.jobs = [...DEFAULT_JOBS];
+    if (state.inventory.length === 0) state.inventory = [...DEFAULT_INVENTORY];
+    if (state.clients.length === 0) state.clients = [
       { id: "cli-1", name: "AutoNation Ford", type: "wholesale", contactName: "Gary Miller", phone: "555-0122", email: "billing@autonationford.com" },
       { id: "cli-2", name: "CarMax Service", type: "wholesale", contactName: "Sarah Jenkins", phone: "555-0145", email: "invoices@carmax.com" },
       { id: "cli-3", name: "Enterprise Rent-A-Car", type: "wholesale", contactName: "Robert Vance", phone: "555-0188", email: "fleet@enterprise.com" },
@@ -481,13 +409,14 @@ function loadData() {
       { id: "cli-5", name: "Julius Caesar", type: "retail", phone: "555-1000", email: "caesar@senate.gov" },
       { id: "cli-6", name: "Cleopatra Philopator", type: "retail", phone: "555-2700", email: "cleo@alexandria.eg" }
     ];
-    localStorage.setItem("bsms_clients", JSON.stringify(state.clients));
+  } catch (err) {
+    console.error("Supabase load error:", err);
   }
 }
 
 // --- Initialization ---
-document.addEventListener("DOMContentLoaded", () => {
-  loadData();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadData();
   renderApp();
   initPaintCalculatorSelectors();
   updateTopNavStats();
@@ -514,12 +443,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Save state to localStorage
-function saveState() {
-  localStorage.setItem("bsms_jobs", JSON.stringify(state.jobs));
-  localStorage.setItem("bsms_inventory", JSON.stringify(state.inventory));
-  localStorage.setItem("bsms_clients", JSON.stringify(state.clients || []));
+// Save state to Supabase
+async function saveState() {
   updateTopNavStats();
+  
+  try {
+    if (state.jobs.length > 0) {
+      const { error: err1 } = await supabase.from('jobs').upsert(state.jobs);
+      if (err1) console.error("Error saving jobs", err1);
+    }
+    
+    if (state.inventory.length > 0) {
+      const { error: err2 } = await supabase.from('inventory').upsert(state.inventory);
+      if (err2) console.error("Error saving inventory", err2);
+    }
+    
+    if (state.clients.length > 0) {
+      const { error: err3 } = await supabase.from('clients').upsert(state.clients);
+      if (err3) console.error("Error saving clients", err3);
+    }
+  } catch (err) {
+    console.error("Supabase save error:", err);
+  }
 }
 
 // --- Navigation Controller ---
