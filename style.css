@@ -2256,28 +2256,31 @@ textarea {
   .kanban-container::-webkit-scrollbar { display: none; }
   
   .kanban-column {
-    min-width: 85vw !important;
+    min-width: 75vw !important;
     scroll-snap-align: center;
-    margin: 0 2.5vw;
+    margin: 0 1rem;
   }
   
   .kanban-card {
     width: 100% !important;
     box-sizing: border-box !important;
-    padding: 0.75rem !important; /* Reduced padding */
+    padding: 0.5rem !important; /* Extremely compact padding */
+    margin-bottom: 0.5rem !important;
   }
   
   .kanban-card-header {
     flex-wrap: wrap !important;
     justify-content: center !important;
     text-align: center !important;
-    gap: 0.5rem !important;
-    font-size: 0.9rem !important;
+    gap: 0.25rem !important;
+    font-size: 0.8rem !important; /* Smaller header font */
+    margin-bottom: 0.25rem !important;
   }
   
   .kanban-card-content {
     text-align: center !important;
-    font-size: 0.75rem !important; /* Reduced text size */
+    font-size: 0.7rem !important; /* Tiny sub-text */
+    line-height: 1.2 !important;
   }
   
   /* Wizard split panels */
