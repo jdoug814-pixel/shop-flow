@@ -5,7 +5,7 @@
 // --- Supabase Initialization ---
 const SUPABASE_URL = "https://izioubbncozezsbwahzg.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6aW91YmJuY296ZXpzYndhaHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0ODU3NTcsImV4cCI6MjA5NzA2MTc1N30.j3U4W6h5nZ-_MQadr7pt4CNWBnITzsuAlux-9W-z4Hw";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // --- Shop Config & Constant Values ---
 const SHOP_LABOR_RATE = 65.00; // Dollars per hour (default fallback)
@@ -385,9 +385,9 @@ const DEFAULT_JOBS = [
 async function loadData() {
   try {
     const [jobsRes, inventoryRes, clientsRes] = await Promise.all([
-      supabase.from('jobs').select('*'),
-      supabase.from('inventory').select('*'),
-      supabase.from('clients').select('*')
+      supabaseClient.from('jobs').select('*'),
+      supabaseClient.from('inventory').select('*'),
+      supabaseClient.from('clients').select('*')
     ]);
 
     if (jobsRes.error) console.error("Error fetching jobs:", jobsRes.error);
@@ -449,17 +449,17 @@ async function saveState() {
   
   try {
     if (state.jobs.length > 0) {
-      const { error: err1 } = await supabase.from('jobs').upsert(state.jobs);
+      const { error: err1 } = await supabaseClient.from('jobs').upsert(state.jobs);
       if (err1) console.error("Error saving jobs", err1);
     }
     
     if (state.inventory.length > 0) {
-      const { error: err2 } = await supabase.from('inventory').upsert(state.inventory);
+      const { error: err2 } = await supabaseClient.from('inventory').upsert(state.inventory);
       if (err2) console.error("Error saving inventory", err2);
     }
     
     if (state.clients.length > 0) {
-      const { error: err3 } = await supabase.from('clients').upsert(state.clients);
+      const { error: err3 } = await supabaseClient.from('clients').upsert(state.clients);
       if (err3) console.error("Error saving clients", err3);
     }
   } catch (err) {
