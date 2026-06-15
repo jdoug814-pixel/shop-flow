@@ -2189,20 +2189,45 @@ textarea {
     padding-bottom: env(safe-area-inset-bottom, 2rem) !important;
   }
 
-  /* Table Mobile Scrolling */
+  /* Table Mobile Card Layout (No Swiping) */
   .table-container {
-    width: 100vw !important;
-    margin-left: -1rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     box-sizing: border-box;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    overflow-x: hidden !important;
   }
-  .table-container::-webkit-scrollbar { display: none; }
   
   .table-container table {
-    min-width: 800px;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .table-container thead {
+    display: none; /* Hide table headers */
+  }
+
+  .table-container tbody tr {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+  }
+
+  .table-container tbody td {
+    border: none !important;
+    padding: 0.25rem 0 !important;
+    text-align: center !important;
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Form Element Sizing */
@@ -2231,7 +2256,7 @@ textarea {
   .kanban-container::-webkit-scrollbar { display: none; }
   
   .kanban-column {
-    min-width: 90vw !important;
+    min-width: 85vw !important;
     scroll-snap-align: center;
     margin: 0 2.5vw;
   }
@@ -2239,6 +2264,20 @@ textarea {
   .kanban-card {
     width: 100% !important;
     box-sizing: border-box !important;
+    padding: 0.75rem !important; /* Reduced padding */
+  }
+  
+  .kanban-card-header {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 0.5rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .kanban-card-content {
+    text-align: center !important;
+    font-size: 0.75rem !important; /* Reduced text size */
   }
   
   /* Wizard split panels */
